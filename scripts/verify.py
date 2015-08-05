@@ -46,10 +46,10 @@ def verify(data):
 
     maximum = verify.r_max.get()
     if data.solution == maximum:
-        rospy.loginfo(rospy.get_caller_id() + "Sum is correct: %d", data.solution)
+        rospy.loginfo(rospy.get_caller_id() + "Maximum is correct: %d", data.solution)
         return True
     else:
-        rospy.logerr(rospy.get_caller_id() + "Wrong sum, should be: %d", maximum)
+        rospy.logerr(rospy.get_caller_id() + "Wrong maximum, should be: %d", maximum)
         return False
 verify.r_max = running_maximum(1000)
 
