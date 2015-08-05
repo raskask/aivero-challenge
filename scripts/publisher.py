@@ -1,5 +1,24 @@
 #!/usr/bin/env python
-# license removed for brevity
+# This Python file uses the following encoding: utf-8
+
+# Copyright (C) 2015 General Interfaces GmbH
+# Maintainer: Raphael Dürscheid <mailto:rd@gi.ai>
+
+# This file is part of *Test the coder*.
+
+# *Test the coder* is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# *Test the coder* is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with *Test the coder*.  If not, see <http://www.gnu.org/licenses/>.
+
 import rospy
 from numpy import random
 from std_msgs.msg import Int64
@@ -7,7 +26,7 @@ from std_msgs.msg import Int64
 def talker():
     pub = rospy.Publisher('numbers', Int64, queue_size=10)
     rospy.init_node('publish', anonymous=True)
-    rate = rospy.Rate(0.4) # 10hz
+    rate = rospy.Rate(100) # 10hz
     while not rospy.is_shutdown():
         random_num = random.randint(0,065105107105)
         rospy.loginfo(random_num)
