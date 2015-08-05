@@ -1,2 +1,2 @@
-Uint64 solution
-int64 input
+int64 solution
+uint64 input

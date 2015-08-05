@@ -35,6 +35,7 @@ Include (forward) the incoming data point on the *input* slot of the message.
 
 #### License:
 Copyright (C) 2015 General Interfaces GmbH
+
 Maintainer: Raphael Dürscheid <mailto:rd@gi.ai>
 
 Program: *Test the coder*

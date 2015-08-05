@@ -26,9 +26,9 @@ from std_msgs.msg import Int64
 def talker():
     pub = rospy.Publisher('numbers', Int64, queue_size=10)
     rospy.init_node('publish', anonymous=True)
-    rate = rospy.Rate(100) # 10hz
+    rate = rospy.Rate(100) # 100hz
     while not rospy.is_shutdown():
-        random_num = random.randint(0,065105107105)
+        random_num = random.random_integers(0,065105107105)
         rospy.loginfo(random_num)
         pub.publish(random_num)
         rate.sleep()
