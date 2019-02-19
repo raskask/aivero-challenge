@@ -1,5 +1,5 @@
-# Test the coder
-## Programming test for software and robotics engineer candidates at Aivero AS
+# Challenge the coder
+## Programming exercise for software and robotics engineer candidates at Aivero AS
 
 ### Task:
 Write a ROS node that calculates the moving maximum (running maximum) over 1000 samples in (soft) realtime of an incoming stream of Uint64s.
@@ -26,7 +26,7 @@ Have fun, don't stress and good success :)
   * type: Int64
 3. Advertise your solution topic
   * topic: /verify
-  * type: programming_test/Solution
+  * type: programming_exercise/Solution
 4. In the callback from (2) do your magic... and ...
 5. Publish your solution after you have incorporated the latest incoming data point (Publish on every single run of the callback).
 Include (forward) the incoming data point on the *input* slot of the message (see **Solution.msg** for the message definition).
@@ -41,7 +41,7 @@ Copyright (C) 2019 Aivero AS
 
 Maintainer: Raphael Dürscheid
 
-Program: *Test the coder*
+Program: *Challenge the coder*
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

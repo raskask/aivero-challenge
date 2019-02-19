@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(programming_test)
+project(programming_exercise)
 
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  roscpp
   std_msgs
   message_generation
 )
@@ -26,4 +27,3 @@ install(PROGRAMS
 	scripts/verify.py
 	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-
