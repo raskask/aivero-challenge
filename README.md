@@ -9,7 +9,7 @@ Add documentation and further adjustments as you see fit.
 
 A rough guide to getting started can be found below.
 
-Have fun and good Success.
+Have fun, don't stress and good success :)
 
 #### Requirements
 * a working ROS distribution installed on your system (https://wiki.ros.org/ROS/Installation)
@@ -36,11 +36,13 @@ Include (forward) the incoming data point on the *input* slot of the message (se
 
 #### License:
 Copyright (C) 2015 General Interfaces GmbH
+
 Copyright (C) 2019 Aivero AS
 
 Maintainer: Raphael Dürscheid
 
 Program: *Test the coder*
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
