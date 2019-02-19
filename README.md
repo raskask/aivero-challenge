@@ -1,5 +1,5 @@
 # Test the coder
-## Programming test for software and robotics engineer candidates at General Interfaces GmbH
+## Programming test for software and robotics engineer candidates at Aivero AS
 
 ### Task:
 Write a ROS node that calculates the moving maximum (running maximum) over 1000 samples in (soft) realtime of an incoming stream of Uint64s.
@@ -11,32 +11,34 @@ A rough guide to getting started can be found below.
 
 Have fun and good Success.
 
-####Requirements
-* a working ROS distribution
-* Indigo or Jade
+#### Requirements
+* a working ROS distribution installed on your system (https://wiki.ros.org/ROS/Installation)
+  * Ubuntu 16.04 or 18.04 (USE THEM or a ROS docker container)
+  * Kinetic (on 16.04) or Melodic (on 18.04)
 * Python 2.7
 
 #### Steps:
 
 1. Create either a C++ or Python ROS node
   * You can find guidance at the [ROS wiki](http://wiki.ros.org/ROS/Tutorials)
-2. Subscribe to the publisher node
+2. Write a callback that subscribes to the publisher node
   * topic: /numbers
   * type: Int64
 3. Advertise your solution topic
   * topic: /verify
   * type: programming_test/Solution
-4. Do your magic...
-5. Publish your solution after you have incorporated the latest incoming data point. 
-Include (forward) the incoming data point on the *input* slot of the message.
+4. In the callback from (2) do your magic... and ...
+5. Publish your solution after you have incorporated the latest incoming data point (Publish on every single run of the callback).
+Include (forward) the incoming data point on the *input* slot of the message (see **Solution.msg** for the message definition).
 6. Add your node to the launch file.
 7. Send your solution to the maintainer
 
 
 #### License:
 Copyright (C) 2015 General Interfaces GmbH
+Copyright (C) 2019 Aivero AS
 
-Maintainer: Raphael Dürscheid <mailto:rd@gi.ai>
+Maintainer: Raphael Dürscheid
 
 Program: *Test the coder*
 This program is free software: you can redistribute it and/or modify

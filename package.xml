@@ -6,7 +6,7 @@
 
   <maintainer email="rapha@todo.todo">rapha</maintainer>
 
-  <license>TODO</license>
+  <license>GPL</license>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>rospy</build_depend>

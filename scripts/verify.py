@@ -2,7 +2,8 @@
 # This Python file uses the following encoding: utf-8
 
 # Copyright (C) 2015 General Interfaces GmbH
-# Maintainer: Raphael Dürscheid <mailto:rd@gi.ai>
+# Copyright (C) 2019 Aivero AS
+# Maintainer: Raphael Dürscheid
 
 # This file is part of *Test the coder*.
 
@@ -62,5 +63,5 @@ def listener():
     rospy.spin()
 
 if __name__ == '__main__':
-    
+
     listener()
