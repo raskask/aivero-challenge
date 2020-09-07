@@ -11,9 +11,10 @@ variables:
 before_script:
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
 
-build-acms:
+build-rand-num-gen:
   stage: build
   script:
+    - cd random_number_generator
     - docker pull $IMAGE_NAME || true
     - docker build -t $IMAGE_NAME .
     - docker push $IMAGE_NAME
