@@ -1,0 +1,19 @@
+image: docker:git
+services:
+- docker:dind
+
+stages:
+- build
+
+variables:
+  IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+
+build-acms:
+  stage: build
+  script:
+    - docker pull $IMAGE_NAME || true
+    - docker build -t $IMAGE_NAME .
+    - docker push $IMAGE_NAME
