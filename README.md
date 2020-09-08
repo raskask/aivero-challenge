@@ -3,7 +3,7 @@
 ## Programming exercise for software, robotics and machine vision engineer candidates at Aivero AS
 
 ### Task:
-Write a RabbitMQ pubsub (publisher/subscriber) program that calculates the moving maximum (running maximum) over 100 
+Write a RabbitMQ pubsub (publisher/subscriber) program that calculates the moving maximum (running maximum) over 100
 samples in (soft) realtime of an incoming stream of signed 64-bit integers.
 Publish your result after processing the incoming number and in addition forward the incoming number to the verifying node.
 
@@ -20,7 +20,7 @@ Have fun, don't stress and good success :)
 
 #### Steps:
 
-1. Implement a small program with a RabbitMQ pubsub client. [Topics and message format](#topics-and-message-format) 
+1. Implement a small program with a RabbitMQ pubsub client. [Topics and message format](#topics-and-message-format)
 describes the topics in use, and the message structure you're expected to use.
 2. When you're ready to test your solution, spin up the `docker-compose`. Please see more instructions in [Testing your solution](#testing-your-solution).
 3. Open the CSV file placed under *results/results.csv* and check that all fields in the rightmost column are `true`.
@@ -48,7 +48,7 @@ so:
 ### solution
 
 `solution` - The validator consumes messages from this topic. You are expected to publish the your results on this
-topic. The messages published to this topic must be JSON formatted and contain a `sequence_number`, `rand` and 
+topic. The messages published to this topic must be JSON formatted and contain a `sequence_number`, `rand` and
 `running_max` field. **You should not change the value of `sequence_number` and `rand` in your program.** Example message:
 
 ```json
@@ -66,11 +66,15 @@ When you're ready to test your solution, you should use the `docker-compose` pro
 ```bash
 docker-compose up -d # starts the docker-compose services and begins producing messages
 # wait a second or two
-docker-compose ps # ensure that all services are "up"
+docker-compose ps # ensure that the rabbitmq and validator services are "up". The number generator will terminate once it has produced its allocated number of messages.
+docker-compose logs -f # Check if the rabbitmq broker is up and the other services have `CONNECTED`
+
 # run your own solution - you'll know better what to do here (hopefully)
 ```
 
-It is a good idea to stop the `docker-compose` when you have tested your script, as it will produce messages for ever.
+It is a good idea to stop the `docker-compose` when you have tested your script, as it will restart the containers on every boot of your machine.
+Unless you specify a `NUMBER_OF_MESSAGES` environment variable in the docker-compose it will produce messages for ever.
+
 Please do so by running:
 
 ```bash
@@ -88,9 +92,9 @@ docker-compose up -d rabbitmq
 ## License:
 Copyright (C) 2015 General Interfaces GmbH
 
-Copyright (C) 2019 Aivero AS
+Copyright (C) 2020 Aivero AS
 
-Maintainer: Raphael Dürscheid
+Maintainer: Tobias Morell, Raphael Dürscheid
 
 Program: *Challenge the coder*
 
