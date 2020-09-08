@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    container_name: rabbitmq
+    restart: unless-stopped
+    network_mode: host
+    ports:
+    - 5672:5672
+
+  random_number_generator:
+    image: registry.gitlab.com/aivero/public/programming-exercise/rand-num:master
+    container_name: rand_gen
+    restart: no
+    network_mode: host
+    depends_on:
+      - rabbitmq
+
+  validator:
+    image: registry.gitlab.com/aivero/public/programming-exercise/validator:master
+    container_name: validator
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      RESULT_FILE_PATH: /results/results.csv
+    depends_on:
+      - rabbitmq
+    volumes:
+    - ./results:/results
