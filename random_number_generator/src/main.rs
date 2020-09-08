@@ -53,8 +53,8 @@ async fn create_publisher(addr: String) -> lapin::Result<Channel> {
     )
     .await;
     while conn.is_err() {
-        info!("Couldn't connect, retrying in 1 s.");
-        thread::sleep(time::Duration::from_secs(1));
+        info!("Couldn't connect, retrying in 5 s.");
+        thread::sleep(time::Duration::from_secs(5));
         conn = Connection::connect(
             &addr,
             ConnectionProperties::default().with_default_executor(8),

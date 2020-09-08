@@ -29,4 +29,4 @@ services:
     depends_on:
       - rabbitmq
     volumes:
-    - ./results:/results
+    - ./results:/results:rw
