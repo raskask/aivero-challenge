@@ -1,16 +1,19 @@
 #[macro_use]
 extern crate serde;
 
+use async_std::{fs::File, prelude::*, sync::Mutex};
+use circular_queue::CircularQueue;
 use env_logger;
 use futures::executor::LocalPool;
 use lapin::{
-    options::*, types::FieldTable, Channel,
-    Connection, ConnectionProperties, Result,
-    message::Delivery,
+    message::Delivery, options::*, types::FieldTable, Channel, Connection, ConnectionProperties,
+    Result,
 };
-use log::{info, error};
-use circular_queue::CircularQueue;
-use async_std::{sync::Mutex, fs::File, prelude::*};
+use log::{error, info};
+use std::{
+    thread,
+    time::{self, Duration},
+};
 
 const QUEUE_NAME: &str = "solution";
 const RUNNING_MAX_WINDOW_SIZE: usize = 100;
@@ -20,7 +23,7 @@ const DEFAULT_RESULT_FILE_NAME: &str = "result.csv";
 struct Message {
     sequence_number: u64,
     rand: i64,
-    running_max: i64
+    running_max: i64,
 }
 
 struct MessageParser {}
@@ -41,18 +44,47 @@ impl MessageValidator {
 
     async fn recreate_results_file() -> File {
         let path = Self::get_result_file_path();
-        File::create(path).await.expect("Could not create output file")
+        File::create(path)
+            .await
+            .expect("Could not create output file")
     }
 
-    fn csv_format<TU : ToString, TI : ToString, TB : ToString>(seq_no: TU, rand: TI, correct_solution: TI, testee_solution: TI, correct: TB) -> String {
-        format!("{},{},{},{},{}\n", seq_no.to_string(), rand.to_string(), correct_solution.to_string(), testee_solution.to_string(), correct.to_string())
+    fn csv_format<TU: ToString, TI: ToString, TB: ToString>(
+        seq_no: TU,
+        rand: TI,
+        correct_solution: TI,
+        testee_solution: TI,
+        correct: TB,
+    ) -> String {
+        format!(
+            "{},{},{},{},{}\n",
+            seq_no.to_string(),
+            rand.to_string(),
+            correct_solution.to_string(),
+            testee_solution.to_string(),
+            correct.to_string()
+        )
     }
 
     pub async fn new() -> Self {
         let mut file = Self::recreate_results_file().await;
-        file.write(Self::csv_format("seq", "rand", "correct_solution", "testee_solution", "correct").as_bytes()).await.expect("Could not write CSV header");
+        file.write(
+            Self::csv_format(
+                "seq",
+                "rand",
+                "correct_solution",
+                "testee_solution",
+                "correct",
+            )
+            .as_bytes(),
+        )
+        .await
+        .expect("Could not write CSV header");
 
-        Self { queue: Mutex::new(CircularQueue::with_capacity(RUNNING_MAX_WINDOW_SIZE)), result_file: Mutex::new(file) }
+        Self {
+            queue: Mutex::new(CircularQueue::with_capacity(RUNNING_MAX_WINDOW_SIZE)),
+            result_file: Mutex::new(file),
+        }
     }
 
     pub async fn validate(&self, message: &Message) -> bool {
@@ -64,23 +96,41 @@ impl MessageValidator {
     }
 
     pub async fn dump_line(&self, message: &Message, correct: bool) {
-        let csv = Self::csv_format(message.sequence_number, message.rand, *self.queue.lock().await.iter().max().unwrap(), message.running_max, correct);
+        let csv = Self::csv_format(
+            message.sequence_number,
+            message.rand,
+            *self.queue.lock().await.iter().max().unwrap(),
+            message.running_max,
+            correct,
+        );
         let mut r_file = self.result_file.lock().await;
-        r_file.write(csv.as_bytes()).await.expect("Could not dump CSV");
+        r_file
+            .write(csv.as_bytes())
+            .await
+            .expect("Could not dump CSV");
         r_file.flush().await.expect("Could not flush result file");
     }
 }
 
 async fn create_consumer(addr: String) -> lapin::Result<Channel> {
-    let conn = Connection::connect(
+    let mut conn = Connection::connect(
         &addr,
         ConnectionProperties::default().with_default_executor(8),
     )
-    .await?;
+    .await;
+    while conn.is_err() {
+        info!("Couldn't connect, retrying in 5 s.");
+        thread::sleep(time::Duration::from_secs(5));
+        conn = Connection::connect(
+            &addr,
+            ConnectionProperties::default().with_default_executor(8),
+        )
+        .await;
+    }
 
     info!("CONNECTED");
 
-    let pub_channel = conn.create_channel().await?;
+    let pub_channel = conn.unwrap().create_channel().await?;
 
     let queue = pub_channel
         .queue_declare(
@@ -119,14 +169,13 @@ async fn run_consumer(channel: Channel) -> lapin::Result<()> {
                     Ok(msg) => {
                         let correct = msg_validator.validate(&msg).await;
                         msg_validator.dump_line(&msg, correct).await;
-                    },
+                    }
                     Err(e) => {
                         error!("Message did not have the correct format: {:?}", e);
                     }
                 }
             }
         }
-
     }
 }
 
