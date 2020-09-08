@@ -6,7 +6,8 @@ stages:
 - build
 
 variables:
-  IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  RAND_NUM_IMAGE_NAME: $CI_REGISTRY_IMAGE/rand-num:$CI_COMMIT_REF_NAME
+  VALIDATOR_IMAGE_NAME: $CI_REGISTRY_IMAGE/validator:$CI_COMMIT_REF_NAME
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
@@ -15,6 +16,14 @@ build-rand-num-gen:
   stage: build
   script:
     - cd random_number_generator
-    - docker pull $IMAGE_NAME || true
-    - docker build -t $IMAGE_NAME .
-    - docker push $IMAGE_NAME
+    - docker pull $RAND_NUM_IMAGE_NAME || true
+    - docker build -t $RAND_NUM_IMAGE_NAME .
+    - docker push $RAND_NUM_IMAGE_NAME
+
+build-validator:
+  stage: build
+  script:
+    - cd random_number_generator
+    - docker pull $VALIDATOR_IMAGE_NAME || true
+    - docker build -t $VALIDATOR_IMAGE_NAME .
+    - docker push $VALIDATOR_IMAGE_NAME

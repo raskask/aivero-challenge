@@ -63,8 +63,10 @@ async fn create_publisher(addr: String) -> lapin::Result<Channel> {
 
 async fn run_publisher(channel: Channel) -> lapin::Result<()> {
     let msg_generator = MessageGenerator::new();
+    let no_msgs = std::env::var("NUMBER_OF_MESSAGES").map(|n| n.parse::<u64>().expect("NUMBER_OF_MESSAGES is not a u64")).ok();
+    let mut msg_counter = 0;
 
-    loop {
+    while no_msgs.is_none() || no_msgs.unwrap() > msg_counter {
         let msg = msg_generator.get_message().await;
         let payload = msg.as_bytes();
 
@@ -81,8 +83,11 @@ async fn run_publisher(channel: Channel) -> lapin::Result<()> {
         assert_eq!(confirm, Confirmation::NotRequested);
         debug!("Published message: {}", msg);
 
+        msg_counter += 1;
         task::sleep(Duration::from_millis(200)).await;
     }
+
+    Ok(())
 }
 
 fn main() -> Result<()> {

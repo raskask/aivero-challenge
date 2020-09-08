@@ -12,7 +12,7 @@ services:
   random_number_generator:
     image: registry.gitlab.com/aivero/public/programming-exercise/rand-num:master
     container_name: rand_gen
-    restart: unless-stopped
+    restart: no
     network_mode: host
     depends_on:
       - rabbitmq
