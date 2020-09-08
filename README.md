@@ -7,6 +7,8 @@ Write a RabbitMQ pubsub (publisher/subscriber) program that calculates the movin
 samples in (soft) real time of an incoming stream of signed 64-bit integers.
 Publish your result after processing the incoming number and in addition forward the incoming number to the verifying node.
 
+Think about how this can be made memory and compute efficient.
+
 Add documentation and further adjustments as you see fit.
 
 A rough guide to getting started can be found below.
