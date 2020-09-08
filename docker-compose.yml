@@ -10,11 +10,21 @@ services:
     - 5672:5672
 
   random_number_generator:
-    image: registry.gitlab.com/aivero/public/programming-exercise
+    image: registry.gitlab.com/aivero/public/programming-exercise/rand-num:master
     container_name: rand_gen
     restart: unless-stopped
     network_mode: host
-    environment:
-      RUST_LOG: debug
     depends_on:
       - rabbitmq
+
+  validator:
+    image: registry.gitlab.com/aivero/public/programming-exercise/validator:master
+    container_name: validator
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      RESULT_FILE_PATH: /results/results.csv
+    depends_on:
+      - rabbitmq
+    volumes:
+    - ./results:/results

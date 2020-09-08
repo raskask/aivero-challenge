@@ -1,4 +1,5 @@
 # Challenge the coder
+
 ## Programming exercise for software and robotics engineer candidates at Aivero AS
 
 ### Task:
