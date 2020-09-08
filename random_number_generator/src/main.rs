@@ -1,14 +1,20 @@
-use futures::executor::LocalPool;
-use lapin::{options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties, Connection, ConnectionProperties, Result, Channel};
-use log::{info, debug};
-use serde_json::json;
-use std::time::Duration;
+use async_std::sync::Mutex;
 use async_std::task;
 use env_logger;
-use async_std::sync::Mutex;
-use rand::{SeedableRng, Rng};
+use futures::executor::LocalPool;
+use lapin::{
+    options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties, Channel,
+    Connection, ConnectionProperties, Result,
+};
+use log::{debug, info};
+use rand::{Rng, SeedableRng};
+use serde_json::json;
+use std::{
+    thread,
+    time::{self, Duration},
+};
 
-const QUEUE_NAME : &str = "rand";
+const QUEUE_NAME: &str = "rand";
 
 struct MessageGenerator {
     sequence_counter: Mutex<u64>,
@@ -35,20 +41,30 @@ impl MessageGenerator {
         json!({
             "sequence_number": seq_no,
             "rand": rand
-        }).to_string()
+        })
+        .to_string()
     }
 }
 
 async fn create_publisher(addr: String) -> lapin::Result<Channel> {
-    let conn = Connection::connect(
+    let mut conn = Connection::connect(
         &addr,
         ConnectionProperties::default().with_default_executor(8),
     )
-    .await?;
+    .await;
+    while conn.is_err() {
+        info!("Couldn't connect, retrying in 1 s.");
+        thread::sleep(time::Duration::from_secs(1));
+        conn = Connection::connect(
+            &addr,
+            ConnectionProperties::default().with_default_executor(8),
+        )
+        .await;
+    }
 
     info!("CONNECTED");
 
-    let pub_channel = conn.create_channel().await?;
+    let pub_channel = conn.unwrap().create_channel().await?;
 
     let queue = pub_channel
         .queue_declare(
@@ -63,7 +79,9 @@ async fn create_publisher(addr: String) -> lapin::Result<Channel> {
 
 async fn run_publisher(channel: Channel) -> lapin::Result<()> {
     let msg_generator = MessageGenerator::new();
-    let no_msgs = std::env::var("NUMBER_OF_MESSAGES").map(|n| n.parse::<u64>().expect("NUMBER_OF_MESSAGES is not a u64")).ok();
+    let no_msgs = std::env::var("NUMBER_OF_MESSAGES")
+        .map(|n| n.parse::<u64>().expect("NUMBER_OF_MESSAGES is not a u64"))
+        .ok();
     let mut msg_counter = 0;
 
     while no_msgs.is_none() || no_msgs.unwrap() > msg_counter {
@@ -73,7 +91,7 @@ async fn run_publisher(channel: Channel) -> lapin::Result<()> {
         let confirm = channel
             .basic_publish(
                 "",
-        QUEUE_NAME,
+                QUEUE_NAME,
                 BasicPublishOptions::default(),
                 payload.to_vec(),
                 BasicProperties::default(),
@@ -84,7 +102,11 @@ async fn run_publisher(channel: Channel) -> lapin::Result<()> {
         debug!("Published message: {}", msg);
 
         msg_counter += 1;
-        task::sleep(Duration::from_millis(200)).await;
+        let wait = std::env::var("WAIT_MILLIES")
+            .map(|n| n.parse::<u64>().expect("NUMBER_OF_MESSAGES is not a u64"))
+            .ok()
+            .unwrap_or_default();
+        task::sleep(Duration::from_millis(wait)).await;
     }
 
     Ok(())

@@ -3,7 +3,7 @@ version: '3'
 services:
   rabbitmq:
     image: rabbitmq:3-alpine
-    container_name: rabbitmq
+    container_name: rabbitmq_broker
     restart: unless-stopped
     network_mode: host
     ports:
@@ -12,11 +12,13 @@ services:
   random_number_generator:
     image: registry.gitlab.com/aivero/public/programming-exercise/rand-num:master
     container_name: rand_gen
-    restart: no
     network_mode: host
+    environment:
+      - NUMBER_OF_MESSAGES=10000
+      - WAIT_MILLIES=0
     depends_on:
       - rabbitmq
-
+  
   validator:
     image: registry.gitlab.com/aivero/public/programming-exercise/validator:master
     container_name: validator
