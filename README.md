@@ -4,7 +4,7 @@
 
 ### Task:
 Write a RabbitMQ pubsub (publisher/subscriber) program that calculates the moving maximum (running maximum) over 100
-samples in (soft) realtime of an incoming stream of signed 64-bit integers.
+samples in (soft) real time of an incoming stream of signed 64-bit integers.
 Publish your result after processing the incoming number and in addition forward the incoming number to the verifying node.
 
 Add documentation and further adjustments as you see fit.
@@ -16,15 +16,15 @@ Have fun, don't stress and good success :)
 #### Requirements
 
 * A docker-compose installation. Please see the [docker-compose installation instructions](https://docs.docker.com/compose/install/) for more information.
-* A programming language with a RabbitMQ client (and preferably a JSON library as well). Please refer to the [RabbitMQ Client Libraries and Developer Tools](https://www.rabbitmq.com/devtools.html).
+* A programming language of your choice with a RabbitMQ client (and preferably a JSON library as well). Please refer to the [RabbitMQ Client Libraries and Developer Tools](https://www.rabbitmq.com/devtools.html).
 
 #### Steps:
 
-1. Implement a small program with a RabbitMQ pubsub client. [Topics and message format](#topics-and-message-format)
-describes the topics in use, and the message structure you're expected to use.
+1. Implement a small program with a RabbitMQ pubsub client that computes the maximum value over a running window of 100 consecutive samples. [Topics and message format](#topics-and-message-format)
+describes the topics (data channels) in use, and the message structure you're expected to use.
 2. When you're ready to test your solution, spin up the `docker-compose`. Please see more instructions in [Testing your solution](#testing-your-solution).
 3. Open the CSV file placed under *results/results.csv* and check that all fields in the rightmost column are `true`.
-4. Send your solution to the maintainer
+4. Send your solution and the csv to the maintainers.
 
 ## Topics and message format
 
@@ -53,7 +53,7 @@ topic. The messages published to this topic must be JSON formatted and contain a
 
 ```json
 {
-  "sequence_number": 0,
+  "sequence_number": 2373,
   "rand": 25,
   "running_max": 12947712
 }
