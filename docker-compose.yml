@@ -10,7 +10,7 @@ services:
     - 5672:5672
 
   random_number_generator:
-    image: registry.gitlab.com/aivero/public/programming-exercise/rand-num:master
+    image: registry.gitlab.com/aivero/open-source/programming-exercise/rand-num:master
     container_name: rand_gen
     network_mode: host
     environment:
@@ -20,7 +20,7 @@ services:
       - rabbitmq
   
   validator:
-    image: registry.gitlab.com/aivero/public/programming-exercise/validator:master
+    image: registry.gitlab.com/aivero/open-source/programming-exercise/validator:master
     container_name: validator
     restart: unless-stopped
     network_mode: host

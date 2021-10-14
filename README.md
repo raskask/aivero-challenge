@@ -94,9 +94,9 @@ docker-compose up -d rabbitmq
 ## License:
 Copyright (C) 2015 General Interfaces GmbH
 
-Copyright (C) 2020 Aivero AS
+Copyright (C) 2021 Aivero AS
 
-Maintainer: Tobias Morell, Raphael Dürscheid
+Maintainer: Raphael Dürscheid
 
 Program: *Challenge the coder*
 
