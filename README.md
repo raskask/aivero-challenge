@@ -2,10 +2,29 @@
 
 ## Programming exercise for software, robotics and machine vision engineer candidates at Aivero AS
 
+In this challenge you will continue to compute the running maximum in a moving window of 100 numbers length over a stream of 10000 random numbers.
+
+```
+# Overview of te desired message flow
+our_random_number_generator --> your_running_maximum_program --> our_validator
+```
+
+We provide you with 
+- a random number generator
+- a validator that checks your solution
+- a rabbitmq message broker that transports messages between the 3 programs
+
+You are to listen (rabbitmq subscribe) to messages containing a single random number each from our number generator, on every incoming message determine the largest number you have encountered within the last 100 consecutive numbers and send (rabbitmq publish) your result to our validator.
+
+
 ### Task:
-Write a RabbitMQ pubsub (publisher/subscriber) program that calculates the moving maximum (running maximum) over 100
-samples in (soft) real time of an incoming stream of signed 64-bit integers.
-Publish your result after processing the incoming number and in addition forward the incoming number to the verifying node.
+Write a RabbitMQ pubsub (publisher/subscriber) program that:
+- Connects to the rabbitmq broker spun up by our docker-compose containers on `amqp://0.0.0.0:5672`
+- Listens on the rabbitmq topic `rand` to an incoming stream of signed 64-bit integers being published by the `random_number_generator` docker container
+- On [every incoming message on the `rand` topic](#rand) computes the running maximum over a moving window of the last 100 consecutive samples.
+- Constructs a json as shown in [the solution section](#solution). It should contain your solution (`running_max` value) as well as content of the `rand` message.
+- Publishes your message on the `solution` topic.
+
 
 Think about how this can be made memory and compute efficient.
 
@@ -17,27 +36,26 @@ Have fun, don't stress and good success :)
 
 #### Requirements
 
-* A docker-compose installation. Please see the [docker-compose installation instructions](https://docs.docker.com/compose/install/) for more information.
+* A docker and docker-compose installation. Please see the [docker-compose installation instructions](https://docs.docker.com/compose/install/) for more information.
 * A programming language of your choice with a RabbitMQ client (and preferably a JSON library as well). Please refer to the [RabbitMQ Client Libraries and Developer Tools](https://www.rabbitmq.com/devtools.html).
 
 #### Steps:
 
-1. Implement a small program with a RabbitMQ pubsub client that computes the maximum value over a running window of 100 consecutive samples. [Topics and message format](#topics-and-message-format)
-describes the topics (data channels) in use, and the message structure you're expected to use.
-2. When you're ready to test your solution, spin up the `docker-compose`. Please see more instructions in [Testing your solution](#testing-your-solution).
-3. Open the CSV file placed under *results/results.csv* and check that all fields in the rightmost column are `true`.
-4. Send your solution and the csv to the maintainers.
+1. Familiarise yourself with the [rabbitmq topics (data channels) and message format](#topics-and-message-format) you're expected to use.
+2. Implement your solution using a programming language of your choice.
+3. When you're ready to test your solution, spin up the `docker-compose`. Please see more instructions in [Testing your solution](#testing-your-solution).
+4. Open the CSV file placed under *results/results.csv* and check that all fields in the rightmost column are `true`.
+5. Send your solution and the .csv to the maintainers.
 
 ## Topics and message format
 
 The `docker-compose` in this challenge hosts a RabbitMQ broker, a random number generator and a validator script. These
 components use two different topics, that you're expected to consume from and publish to. They are, respectively:
 
-
 ### rand
 
-`rand` - The random number generator publishes messages to this topic. You are expected to subscribe to and consume
-these messages in your program. The messages are JSON formatted and contains a `sequence_number` and a `rand` field, like
+`rand` - The random number generator publishes messages to this topic. **You are expected to subscribe to and consume
+these messages in your program.** The messages are JSON formatted and contain a monotonically increasing serial: `sequence_number` and a random number: `rand` field, like
 so:
 
 ```json
@@ -49,9 +67,10 @@ so:
 
 ### solution
 
-`solution` - The validator consumes messages from this topic. You are expected to publish the your results on this
-topic. The messages published to this topic must be JSON formatted and contain a `sequence_number`, `rand` and
-`running_max` field. **You should not change the value of `sequence_number` and `rand` in your program.** Example message:
+`solution` - The validator consumes messages from this topic. **You are expected to publish the your results on this
+topic.** The messages published to this topic must be JSON formatted and contain a `sequence_number`, `rand` and
+`running_max` field. **You should not change the value of `sequence_number` and `rand` in your program.** 
+Example message:
 
 ```json
 {
