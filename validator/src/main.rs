@@ -155,7 +155,7 @@ async fn run_consumer(channel: Channel) -> lapin::Result<()> {
             .expect("Failed to get consumer");
 
         for delivery in consumer {
-            info!("received message: {:?}", delivery);
+            // info!("received message: {:?}", delivery);
             if let Ok((channel, delivery)) = delivery {
                 channel
                     .basic_ack(delivery.delivery_tag, BasicAckOptions::default())
