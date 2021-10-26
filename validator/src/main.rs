@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate serde;
 
-use async_std::{fs::File, prelude::*, sync::Mutex};
+use async_std::{fs::File, io::WriteExt, prelude::*, sync::Mutex};
 use circular_queue::CircularQueue;
 use env_logger;
 use futures::executor::LocalPool;
@@ -65,7 +65,7 @@ impl MessageValidator {
 
     pub async fn new() -> Self {
         let mut file = Self::recreate_results_file().await;
-        file.write(
+        file.write_all(
             Self::csv_format(
                 "seq",
                 "rand",
@@ -102,7 +102,7 @@ impl MessageValidator {
         );
         let mut r_file = self.result_file.lock().await;
         r_file
-            .write(csv.as_bytes())
+            .write_all(csv.as_bytes())
             .await
             .expect("Could not dump CSV");
         r_file.flush().await.expect("Could not flush result file");

@@ -108,6 +108,9 @@ async fn run_publisher(channel: Channel) -> lapin::Result<()> {
         task::sleep(Duration::from_millis(wait)).await;
     }
 
+    info!("Sleeping 5s to ensure that connection has sent all messages...");
+    task::sleep(Duration::from_millis(5000)).await;
+
     Ok(())
 }
 
