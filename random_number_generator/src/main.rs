@@ -1,6 +1,5 @@
 use async_std::sync::Mutex;
 use async_std::task;
-use env_logger;
 use futures::executor::LocalPool;
 use lapin::{
     options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties, Channel,
@@ -99,7 +98,7 @@ async fn run_publisher(channel: Channel) -> lapin::Result<()> {
             .await?
             .await?;
         assert_eq!(confirm, Confirmation::NotRequested);
-        debug!("Published message: {}", msg);
+        // debug!("Published message: {}", msg);
 
         msg_counter += 1;
         let wait = std::env::var("WAIT_MILLIES")

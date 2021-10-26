@@ -10,14 +10,11 @@ use lapin::{
     Result,
 };
 use log::{error, info};
-use std::{
-    thread,
-    time::{self, Duration},
-};
+use std::{thread, time};
 
 const QUEUE_NAME: &str = "solution";
 const RUNNING_MAX_WINDOW_SIZE: usize = 100;
-const DEFAULT_RESULT_FILE_NAME: &str = "result.csv";
+const DEFAULT_RESULT_FILE_NAME: &str = "results/result.csv";
 
 #[derive(Deserialize)]
 struct Message {
@@ -39,7 +36,7 @@ struct MessageValidator {
 }
 impl MessageValidator {
     fn get_result_file_path() -> String {
-        std::env::var("RESULT_FILE_PATH").unwrap_or(DEFAULT_RESULT_FILE_NAME.to_string())
+        std::env::var("RESULT_FILE_PATH").unwrap_or_else(|_| DEFAULT_RESULT_FILE_NAME.to_string())
     }
 
     async fn recreate_results_file() -> File {

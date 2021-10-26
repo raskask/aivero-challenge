@@ -6,8 +6,6 @@ services:
     container_name: rabbitmq_broker
     restart: unless-stopped
     network_mode: host
-    ports:
-    - 5672:5672
 
   random_number_generator:
     image: registry.gitlab.com/aivero/open-source/programming-exercise/rand-num:master

@@ -23,7 +23,7 @@ build-rand-num-gen:
 build-validator:
   stage: build
   script:
-    - cd random_number_generator
+    - cd validator
     - docker pull $VALIDATOR_IMAGE_NAME || true
     - docker build -t $VALIDATOR_IMAGE_NAME .
     - docker push $VALIDATOR_IMAGE_NAME
