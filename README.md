@@ -5,7 +5,7 @@
 In this challenge you will continue to compute the running maximum in a moving window of 100 numbers length over a stream of 10000 random numbers.
 
 ```
-# Overview of te desired message flow
+# Overview of the desired message flow
 our_random_number_generator --> your_running_maximum_program --> our_validator
 ```
 
