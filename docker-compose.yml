@@ -28,3 +28,14 @@ services:
       - rabbitmq
     volumes:
     - ./results:/results:rw
+  
+  running max:
+    image: /programming-exercise/running_max
+    container_name: running_max
+    network_mode: host
+    depends_on:
+      - rabbitmq
+
+ 
+
+  
